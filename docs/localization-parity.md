@@ -1,6 +1,6 @@
 # Localization parity
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-16 · **Change:** minor (French formula names and syntax) · **Target:** Microsoft Excel (Microsoft 365), Excel for Mac 16.113.4
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-16 · **Change:** minor (French native macOS menus and quick-access menu) · **Target:** Microsoft Excel (Microsoft 365), Excel for Mac 16.113.4
 
 Per-language status against Excel, which ships its UI in dozens of languages (Windows language
 packs cover 100+), with localized function names, argument separators, number and date formats,
@@ -36,6 +36,12 @@ right-to-left sheets and full complex-script support. Part of
   (no bidi), and the sheet tabs, horizontal scrollbar and printing/PDF are not mirrored yet. IME input goes
   through egui/winit and is unverified for Chinese, Japanese and Korean.
 - **PDF export** uses only the 14 standard PDF fonts: non-Latin text cannot export.
+
+The native macOS menu bar now uses the shared language catalog, including application,
+File/Edit/View menus and theme choices. Changing the interface language updates the existing
+menu items without reinstalling the menu or changing command ids/shortcuts. The quick-access
+More commands menu also uses the catalog. French includes all native menu labels; macOS-owned
+window-management items continue to follow the system language.
 
 ## Languages
 
@@ -80,6 +86,7 @@ language (none so far) and of localized function names.
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-16 | minor | Native macOS menus follow the selected UI language at startup and on changes; 69 French labels added, quick-access menu translated; AppKit integration test checks French and English titles |
 | 2026-10-16 | minor | French formula table covers all 514 registered names; existing locale boundary handles entry, display, autocomplete, templates and canonical XLSX round trips |
 | 2026-10-12 | minor | Format Cells looks up its tabs, labels, options and note through `Language::tr` (Fill tab keyed `Format Cells\|Fill`); dialog titles and OK/Cancel too. Labels already in a table (Number, Currency, Fill…) show translated; the rest fall back to English until the tables add them |
 | 2026-10-12 | minor | Brazilian Portuguese catalog (`i18n/pt.rs`) grows from 377 to 923 entries: every key the other catalogs translate, including the dialog strings #669 starts looking up (~42%) |

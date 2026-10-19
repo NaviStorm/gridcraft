@@ -270,6 +270,7 @@ pub(super) fn translate(text: &str) -> Option<&'static str> {
         "Ready" => "준비",
         "Enter" => "입력",
         "Edit" => "편집",
+        "menu|Edit" => "편집",
         "Point" => "가리키기",
         "Calculate" => "계산",
         "Select destination and press Enter or choose Paste" => "대상을 선택하고 Enter 키를 누르거나 [붙여넣기]를 선택하세요",

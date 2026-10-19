@@ -458,6 +458,7 @@ const JAPANESE: &[(&str, &str)] = &[
     ("Ready", "準備完了"),
     ("Enter", "入力"),
     ("Edit", "編集"),
+    ("menu|Edit", "編集"),
     ("Point", "ポイント"),
     ("Calculate", "計算"),
     ("Select destination and press Enter or choose Paste", "貼り付け先を選び、Enter キーを押すか [貼り付け] を選びます"),
@@ -627,6 +628,13 @@ mod tests {
         assert_eq!(Language::De.tr("Data"), "Daten");
         assert_eq!(Language::De.tr("Sheet1!A1"), "Sheet1!A1");
         assert_eq!(Language::Fr.tr("Data"), "Données");
+        assert_eq!(Language::Fr.tr("menu|Edit"), "Édition");
+        assert_eq!(Language::Fr.tr("Edit"), "Modifier");
+        for language in Language::ALL {
+            if language != Language::Fr {
+                assert_eq!(language.tr("menu|Edit"), language.tr("Edit"));
+            }
+        }
         assert_eq!(Language::Fr.tr("Sheet1!A1"), "Sheet1!A1");
         assert_eq!(Language::PtBr.tr("Date"), "Data");
         assert_eq!(Language::PtBr.tr("Sheet1!A1"), "Sheet1!A1");

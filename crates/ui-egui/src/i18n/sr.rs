@@ -273,6 +273,7 @@ pub(super) fn translate(text: &str) -> Option<&'static str> {
         "Ready" => "Spremno",
         "Enter" => "Unos",
         "Edit" => "Uređivanje",
+        "menu|Edit" => "Uređivanje",
         "Point" => "Pokaži",
         "Calculate" => "Izračunavanje",
         "Select destination and press Enter or choose Paste" => "Izaberi odredište i pritisni Enter ili izaberi Nalepi",

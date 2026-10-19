@@ -270,6 +270,7 @@ pub(super) fn translate(text: &str) -> Option<&'static str> {
         "Ready" => "就绪",
         "Enter" => "输入",
         "Edit" => "编辑",
+        "menu|Edit" => "编辑",
         "Point" => "指向",
         "Calculate" => "计算",
         "Select destination and press Enter or choose Paste" => "选择目标位置并按 Enter，或选择“粘贴”",

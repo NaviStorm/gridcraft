@@ -35,7 +35,7 @@ fn tree() -> Vec<(&'static str, Vec<Entry>)> {
             ],
         ),
         (
-            "Edit",
+            "menu|Edit",
             vec![
                 ("Undo", "edit.undo", None),
                 ("Redo", "edit.redo", None),

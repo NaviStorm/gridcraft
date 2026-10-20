@@ -37,6 +37,7 @@ impl FormulaLocale {
     pub fn array_column_separator(self) -> char {
         if self != Self::En { '\\' } else { ',' }
     }
+    /// Returns canonical-to-localized function names for this formula locale.
     fn aliases(self) -> &'static [(&'static str, &'static str)] {
         match self {
             Self::En => &[],

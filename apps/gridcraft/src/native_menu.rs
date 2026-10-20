@@ -188,6 +188,7 @@ enum Label {
 }
 
 impl Label {
+    /// Updates the displayed label without replacing the native menu item.
     fn set_text(&self, text: &str) {
         match self {
             Self::Item(item) => item.set_text(text),

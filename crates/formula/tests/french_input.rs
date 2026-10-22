@@ -41,6 +41,27 @@ fn french_translation_preserves_user_text_names_and_scopes() {
         let shown = print_input(&expr, FormulaLocale::Fr, known).unwrap();
         assert_eq!(print(&parse_input(&shown, FormulaLocale::Fr, known).unwrap()), print(&expr));
     }
-    let deep = "FAUX+".repeat(300) + "VRAI";
+    let deep = "NON(".repeat(300) + "VRAI" + &")".repeat(300);
     assert!(parse_input(&deep, FormulaLocale::Fr, |_| false).is_err());
+}
+
+#[test]
+fn french_localization_keeps_upstream_long_chain_and_unicode_name_support() {
+    std::thread::Builder::new()
+        .stack_size(512 * 1024)
+        .spawn(|| {
+            let canonical = vec!["1"; 4096].join("+");
+            let expr = parse_input(&canonical, FormulaLocale::Fr, |_| false).unwrap();
+            assert_eq!(print_input(&expr, FormulaLocale::Fr, |_| false).unwrap(), canonical);
+            let french = vec!["SOMME(1;2)"; 700].join("+");
+            let expr = parse_input(&french, FormulaLocale::Fr, |_| false).unwrap();
+            assert_eq!(print(&expr), vec!["SUM(1,2)"; 700].join("+"));
+            assert_eq!(print_input(&expr, FormulaLocale::Fr, |_| false).unwrap(), french);
+        })
+        .unwrap()
+        .join()
+        .unwrap();
+    let expr = parse_input("LET(ſomme;LAMBDA(x;x*2);SOMME(3))", FormulaLocale::Fr, |_| false).unwrap();
+    assert_eq!(print(&expr), "LET(ſomme,LAMBDA(x,x*2),SOMME(3))");
+    assert_eq!(print_input(&expr, FormulaLocale::Fr, |_| false).unwrap(), "LET(ſomme;LAMBDA(x;x*2);SOMME(3))");
 }

@@ -65,3 +65,43 @@ fn french_localization_keeps_upstream_long_chain_and_unicode_name_support() {
     assert_eq!(print(&expr), "LET(ſomme,LAMBDA(x,x*2),SOMME(3))");
     assert_eq!(print_input(&expr, FormulaLocale::Fr, |_| false).unwrap(), "LET(ſomme;LAMBDA(x;x*2);SOMME(3))");
 }
+
+#[test]
+fn french_conditional_extrema_use_the_excel_names() {
+    for (english, french) in [("MAXIFS", "MAX.SI.ENS"), ("MINIFS", "MIN.SI.ENS")] {
+        assert_eq!(FormulaLocale::Fr.function_name(english), french);
+        let expr = parse_input(&format!("{french}(A1:A3;B1:B3;\">0\")"), FormulaLocale::Fr, |_| false).unwrap();
+        assert_eq!(print(&expr), format!("{english}(A1:A3,B1:B3,\">0\")"));
+    }
+}
+
+#[test]
+fn french_error_values_round_trip_without_rewriting_user_text() {
+    use gridcraft_core::CellError;
+    for (french, canonical) in [
+        ("SI(ESTERREUR(A1);#VALEUR!;A1)", "IF(ISERROR(A1),#VALUE!,A1)"),
+        ("SIERREUR(A1;#N/A)+#NOMBRE!", "IFERROR(A1,#N/A)+#NUM!"),
+        ("{#NOM?\\#NUL!;#DIV/0!\\#REF!}", "{#NAME?,#NULL!;#DIV/0!,#REF!}"),
+        ("#PROPAGATION!&#CALC!&#CHARGEMENT_DONNEES", "#SPILL!&#CALC!&#GETTING_DATA"),
+        ("SI(VRAI;\"#VALUE!\";'#VALEUR!'!A1)", "IF(TRUE,\"#VALUE!\",'#VALEUR!'!A1)"),
+        ("SOMME(A1#)", "SUM(A1#)"),
+    ] {
+        assert_eq!(print(&parse_input(french, FormulaLocale::Fr, |_| false).unwrap()), canonical);
+        assert_eq!(print_input(&parse(canonical).unwrap(), FormulaLocale::Fr, |_| false).unwrap(), french);
+    }
+    for error in CellError::ALL {
+        let canonical = error.as_str();
+        let french = FormulaLocale::Fr.error_name(error);
+        assert_eq!(FormulaLocale::Fr.parse_error(&french.to_ascii_lowercase()), Some(error));
+        assert_eq!(print(&parse_input(canonical, FormulaLocale::Fr, |_| false).unwrap()), canonical);
+        assert_eq!(print(&parse_input(french, FormulaLocale::Fr, |_| false).unwrap()), canonical);
+        assert_eq!(print_input(&parse(canonical).unwrap(), FormulaLocale::En, |_| false).unwrap(), canonical);
+        assert_eq!(print_input(&parse(canonical).unwrap(), FormulaLocale::Es, |_| false).unwrap(), canonical);
+    }
+    assert_eq!(FormulaLocale::Fr.error_name(CellError::Circ), "#CIRC!");
+    for bad in ["#VALEUR", "#PROPAGATION", "#VALEUR!suffix", "#VALEUR!é"] {
+        assert!(parse_input(bad, FormulaLocale::Fr, |_| false).is_err(), "{bad}");
+    }
+    assert!(parse("#VALEUR!").is_err());
+    assert!(parse_input("#VALEUR!", FormulaLocale::Es, |_| false).is_err());
+}

@@ -1,6 +1,6 @@
 # Localization parity
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-23 · **Change:** minor (French localization reconciled with upstream; the Japanese catalog covers the dialogs, messages and menus; Dutch interface language; Romanian interface catalog) · **Target:** Microsoft Excel (Microsoft 365), Excel for Mac 16.113.4
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-23 · **Change:** minor (French formula error literals and corrected MAXIFS/MINIFS names; French localization reconciled with upstream; the Japanese catalog covers the dialogs, messages and menus; Dutch interface language; Romanian interface catalog) · **Target:** Microsoft Excel (Microsoft 365), Excel for Mac 16.113.4
 
 Per-language status against Excel, which ships its UI in dozens of languages (Windows language
 packs cover 100+), with localized function names, argument separators, number and date formats,
@@ -120,6 +120,7 @@ language (none so far) and of localized function names.
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-23 | minor | Adapted PR #2310: MAXIFS/MINIFS use MAX.SI.ENS/MIN.SI.ENS; French error literals are read and displayed in formulas while storage stays canonical English; regression tests cover registry coverage, name uniqueness, evaluation and XLSX round trips |
 | 2026-10-23 | minor | PR #1639 reconciled with upstream function-help catalogs, locale additions, Unicode LET/LAMBDA names and stack-safe long chains; French names and native-menu localization retained |
 | 2026-10-21 | minor | Romanian interface (`ro`, Română): 970 labels covering every key of the other catalogs (`crates/ui-egui/src/i18n/ro.rs`), `ro-*` system locales, the View-tab switcher and `app.language.set`; context keys show no prefix (File › Options test). English formulas and formats; AI-assisted draft pending native-speaker review |
 | 2026-10-20 | minor | Japanese: furigana (`rPh` phonetic runs and `<phoneticPr>` in `xl/sharedStrings.xml`) is no longer deleted by an open + save; it is kept on the workbook and written back (a `<phoneticPr>` without runs is kept too, while duplicate texts with different readings keep only the first, reported on open). Display of the readings is still missing (`crates/xlsx/src/tests/phonetic_tests.rs`) |

@@ -1,6 +1,7 @@
 //! Localized aliases accepted at user-entry boundaries; file syntax stays English.
 
 use crate::{Expr, ParseError, parser};
+use gridcraft_core::CellError;
 
 mod french;
 
@@ -33,6 +34,20 @@ const SPANISH: &[(&str, &str)] = &[
     ("FALSE", "FALSO"),
 ];
 
+/// French error spellings, following PR #2310; GridCraft's own #CIRC! stays unchanged.
+const FRENCH_ERRORS: &[(CellError, &str)] = &[
+    (CellError::Null, "#NUL!"),
+    (CellError::Div0, "#DIV/0!"),
+    (CellError::Value, "#VALEUR!"),
+    (CellError::Ref, "#REF!"),
+    (CellError::Name, "#NOM?"),
+    (CellError::Num, "#NOMBRE!"),
+    (CellError::NA, "#N/A"),
+    (CellError::GettingData, "#CHARGEMENT_DONNEES"),
+    (CellError::Spill, "#PROPAGATION!"),
+    (CellError::Calc, "#CALC!"),
+];
+
 impl FormulaLocale {
     pub fn list_separator(self) -> char {
         if self != Self::En { ';' } else { ',' }
@@ -44,7 +59,7 @@ impl FormulaLocale {
         if self != Self::En { '\\' } else { ',' }
     }
     /// Returns canonical-to-localized function names for this formula locale.
-    fn aliases(self) -> &'static [(&'static str, &'static str)] {
+    pub fn aliases(self) -> &'static [(&'static str, &'static str)] {
         match self {
             Self::En => &[],
             Self::Es => SPANISH,
@@ -56,6 +71,21 @@ impl FormulaLocale {
     }
     pub fn canonical_name(self, localized: &str) -> &str {
         self.aliases().iter().find(|(_, local)| local.eq_ignore_ascii_case(localized)).map(|(en, _)| *en).unwrap_or(localized)
+    }
+    /// Localized error literals; unlisted errors keep their canonical spelling.
+    pub(crate) fn errors(self) -> &'static [(CellError, &'static str)] {
+        match self {
+            Self::Fr => FRENCH_ERRORS,
+            Self::En | Self::Es => &[],
+        }
+    }
+    /// The error spelling used when displaying a formula in this language.
+    pub fn error_name(self, error: CellError) -> &'static str {
+        self.errors().iter().find(|(e, _)| *e == error).map(|(_, name)| *name).unwrap_or(error.as_str())
+    }
+    /// Reads a localized or canonical error value, case-insensitively.
+    pub fn parse_error(self, text: &str) -> Option<CellError> {
+        self.errors().iter().find(|(_, name)| name.eq_ignore_ascii_case(text)).map(|(e, _)| *e).or_else(|| CellError::parse(text))
     }
 }
 
@@ -116,6 +146,7 @@ pub fn print_input(expr: &Expr, locale: FormulaLocale, known_name: impl Fn(&str)
                 array_depth = array_depth.saturating_sub(1);
                 out.push_str(text);
             }
+            Tok::Error(e) => out.push_str(locale.error_name(e)),
             Tok::Number(_) => out.push_str(&text.replace('.', &locale.decimal_separator().to_string())),
             Tok::Comma => out.push(if array_depth > 0 { locale.array_column_separator() } else { locale.list_separator() }),
             _ => out.push_str(text),

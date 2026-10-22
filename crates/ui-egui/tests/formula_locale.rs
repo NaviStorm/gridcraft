@@ -313,3 +313,24 @@ fn turkish_interface_retains_its_canonical_formula_fallback() {
     let restored: UiState = serde_json::from_str(&serde_json::to_string(&app.ui).unwrap()).unwrap();
     assert_eq!(restored.language, Language::Tr);
 }
+
+#[test]
+fn french_extrema_and_error_formulas_keep_canonical_xlsx_storage() {
+    let mut app = app();
+    app.run("app.language.set", json!({"language":"fr"})).unwrap();
+    app.run("range.setValues", json!({"range":"B1", "values":[[4,1],[10,2],[-3,-1]]})).unwrap();
+    for (name, expected) in [("MAX.SI.ENS", 10.0), ("MIN.SI.ENS", 4.0)] {
+        assert!(enter(&mut app, &format!("={name}(B1:B3;C1:C3;\">0\")")));
+        assert_eq!(app.session.active().unwrap().wb.active().unwrap().value(CellRef::new(0, 0)), Value::Number(expected));
+    }
+    assert!(enter(&mut app, "=SI(VRAI;#VALEUR!;#PROPAGATION!)"));
+    assert_eq!(formula(&app), "IF(TRUE,#VALUE!,#SPILL!)");
+    assert_eq!(app.session.active().unwrap().wb.active().unwrap().value(CellRef::new(0, 0)), Value::Error(CellError::Value));
+    let saved = app.run("file.save", json!({"format":"xlsx"})).unwrap();
+    app.run("file.open", json!({"name":"erreurs.xlsx", "base64":saved["base64"]})).unwrap();
+    assert_eq!(formula(&app), "IF(TRUE,#VALUE!,#SPILL!)");
+    app.begin_edit(None, true);
+    assert_eq!(app.editor.as_ref().unwrap().text, "=SI(VRAI;#VALEUR!;#PROPAGATION!)");
+    assert!(app.commit_edit(0, 0, false, false));
+    assert_eq!(formula(&app), "IF(TRUE,#VALUE!,#SPILL!)");
+}

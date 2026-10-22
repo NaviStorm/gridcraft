@@ -2,7 +2,7 @@
 
 **Stage: alpha** · next: beta, ~25 points of "ready for real work" and ~160–240 h away
 
-> **Last reviewed:** 2026-10-11 · **Last updated:** 2026-10-23 · **Change:** minor (French formula errors and corrected conditional extrema names; French localization reconciled with upstream; Page Setup paper sizes: JIS B4/B5/B6, the Japanese postcards and envelopes, and A6; long flat operator chains up to Excel's formula limit) · **Target:** Microsoft Excel (Microsoft 365)
+> **Last reviewed:** 2026-10-11 · **Last updated:** 2026-10-23 · **Change:** minor (native macOS menu language refreshed after the UI pass; French formula errors and corrected conditional extrema names; French localization reconciled with upstream; Page Setup paper sizes: JIS B4/B5/B6, the Japanese postcards and envelopes, and A6; long flat operator chains up to Excel's formula limit) · **Target:** Microsoft Excel (Microsoft 365)
 
 GridCraft aims at full Microsoft Excel parity, and at being better in places: faster, open (XLSX
 is the native format), fully scriptable by agents (MCP, control channel, CLI), and on the web.
@@ -136,6 +136,7 @@ Ranked; estimates in Opus 5.5 agent-hours. Detail and the full beta-gate list in
 
 | Date | What landed |
 |---|---|
+| 2026-10-23 | Native macOS menus reflect language changes in the same frame, without waiting for another input event. |
 | 2026-10-23 | French formula error literals and corrected MAX.SI.ENS/MIN.SI.ENS names (adapted from #2310); registry coverage and uniqueness tested, canonical file/API syntax preserved. |
 | 2026-10-23 | French formula localization reconciled with upstream function help, Unicode name matching and long flat operator-chain support; regression coverage retains both French and upstream behavior. |
 | 2026-10-21 | Page Setup paper sizes match Japanese Excel: `B4`/`B5`/`B6` are the JIS sizes (ISO B4/B5/B6 stay reachable by name), so a Japanese B5 worksheet prints at 182×257 mm; Japanese Postcard (100×148 mm), Double Postcard (148×200 mm), Envelope #3/#4 (120×235/90×205 mm), Kaku #2/#3 (240×332/216×277 mm) and A6 are added, both sizes reach the PDF page (`file.exportPdf`/`file.print` MediaBox) and the size survives an XLSX round-trip; the Page Layout Size menu lists them. `B4`/`B5` used to be the ISO sizes, which is changed here |
@@ -225,6 +226,7 @@ Ranked; estimates in Opus 5.5 agent-hours. Detail and the full beta-gate list in
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-23 | minor | Native macOS menus refresh after the UI pass when the language changes |
 | 2026-10-21 | minor | Page Setup paper sizes: JIS B4/B5/B6 (ISO by name), Japanese postcards and envelopes, A6; PDF page size follows, XLSX round-trips |
 | 2026-10-20 | minor | Dutch (nl) listed under other shipped languages; progress log row |
 | 2026-10-19 | minor | Progress log: long flat operator chains (#916) |

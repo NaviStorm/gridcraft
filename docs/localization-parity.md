@@ -1,6 +1,6 @@
 # Localization parity
 
-> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-23 · **Change:** minor (French formula error literals and corrected MAXIFS/MINIFS names; French localization reconciled with upstream; the Japanese catalog covers the dialogs, messages and menus; Dutch interface language; Romanian interface catalog) · **Target:** Microsoft Excel (Microsoft 365), Excel for Mac 16.113.4
+> **Last reviewed:** 2026-10-10 · **Last updated:** 2026-10-23 · **Change:** minor (native macOS menu language refreshed after the UI pass; French formula error literals and corrected MAXIFS/MINIFS names; French localization reconciled with upstream; the Japanese catalog covers the dialogs, messages and menus; Dutch interface language; Romanian interface catalog) · **Target:** Microsoft Excel (Microsoft 365), Excel for Mac 16.113.4
 
 Per-language status against Excel, which ships its UI in dozens of languages (Windows language
 packs cover 100+), with localized function names, argument separators, number and date formats,
@@ -67,7 +67,8 @@ shows “Édition” while the existing action label remains “Modifier”.
 
 The native macOS menu bar now uses the shared language catalog, including application,
 File/Edit/View menus and theme choices. Changing the interface language updates the existing
-menu items without reinstalling the menu or changing command ids/shortcuts. The quick-access
+menu items in the same frame, after the UI pass, without reinstalling the menu or changing
+command ids/shortcuts. The quick-access
 More commands menu also uses the catalog. French includes all native menu labels; macOS-owned
 window-management items continue to follow the system language.
 
@@ -120,6 +121,7 @@ language (none so far) and of localized function names.
 
 | Date | Change | Summary |
 |---|---|---|
+| 2026-10-23 | minor | Refresh native macOS menus after the UI pass so selecting a language takes effect without waiting for another input event |
 | 2026-10-23 | minor | Adapted PR #2310: MAXIFS/MINIFS use MAX.SI.ENS/MIN.SI.ENS; French error literals are read and displayed in formulas while storage stays canonical English; regression tests cover registry coverage, name uniqueness, evaluation and XLSX round trips |
 | 2026-10-23 | minor | PR #1639 reconciled with upstream function-help catalogs, locale additions, Unicode LET/LAMBDA names and stack-safe long chains; French names and native-menu localization retained |
 | 2026-10-21 | minor | Romanian interface (`ro`, Română): 970 labels covering every key of the other catalogs (`crates/ui-egui/src/i18n/ro.rs`), `ro-*` system locales, the View-tab switcher and `app.language.set`; context keys show no prefix (File › Options test). English formulas and formats; AI-assisted draft pending native-speaker review |

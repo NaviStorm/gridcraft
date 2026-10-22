@@ -56,6 +56,11 @@ impl eframe::App for App {
     }
     fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
         self.0.ui(ui);
+        // Apply language changes made by the UI without waiting for another repaint.
+        #[cfg(target_os = "macos")]
+        if let Some(m) = &mut self.1 {
+            m.poll(&mut self.0, ui.ctx());
+        }
     }
     fn on_exit(&mut self) {
         print::finish_pending_jobs();

@@ -3,6 +3,11 @@ use serde_json::json;
 
 use crate::Session;
 
+thread_local! {
+    /// Copies of a document's undo and redo history `execute` has taken on this thread.
+    pub(crate) static HISTORY_COPIES: std::cell::Cell<usize> = const { std::cell::Cell::new(0) };
+}
+
 fn s() -> Session {
     let mut s = Session::new();
     s.new_workbook();
@@ -2720,6 +2725,21 @@ fn file_options_reports_settings_and_asks_for_the_options_page() {
     assert_eq!(s.active().unwrap().wb, before, "Options never changes the workbook");
 }
 
+/// Ctrl+8 hides and shows the outline symbols; it's undoable and a sheet setting.
+#[test]
+fn show_outline_symbols_toggles() {
+    let mut s = s();
+    let on = |s: &Session| s.active().unwrap().wb.active().unwrap().show_outline_symbols;
+    assert!(on(&s));
+    assert_eq!(s.execute("view.showOutlineSymbols", json!({})).unwrap(), json!({"on": false}));
+    assert!(!on(&s));
+    s.execute("edit.undo", json!({})).unwrap();
+    assert!(on(&s));
+    s.execute("view.showOutlineSymbols", json!({"on": false})).unwrap();
+    reopen(&mut s);
+    assert!(!on(&s));
+}
+
 fn reopen(s: &mut Session) {
     let r = s.execute("file.saveBytes", json!({"format": "xlsx"})).unwrap();
     let b64 = r["base64"].as_str().unwrap().to_string();
@@ -4584,3 +4604,4 @@ fn html_export_without_pictures_or_charts_has_no_fixed_geometry() {
     let html = crate::io::to_html(&s.doc().unwrap().wb, 0).unwrap();
     assert!(!html.contains("<colgroup>") && !html.contains("table-layout") && !html.contains("<svg") && !html.contains("<img"), "{html}");
 }
+mod seams;
